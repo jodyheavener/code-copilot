@@ -1,42 +1,40 @@
 {
-  "name": "copilot",
-  "version": "1.0.0",
+  "name": "code-copilot",
+  "version": "0.1.0",
   "private": true,
   "description": "Prepare your PRs for a smooth landing",
   "author": "Jody Heavener <j.heavener@gmail.com>",
   "license": "ISC",
-  "repository": "https://github.com/jodyheavener/copilot.git",
-  "homepage": "https://github.com/jodyheavener/copilot",
-  "bugs": "https://github.com/jodyheavener/copilot/issues",
+  "repository": "https://github.com/jodyheavener/code-copilot.git",
+  "homepage": "https://github.com/jodyheavener/code-copilot",
+  "bugs": "https://github.com/jodyheavener/code-copilot/issues",
   "keywords": [
     "probot",
+    "pull request",
     "github",
-    "probot-app"
+    "copilot"
   ],
   "scripts": {
     "build": "tsc",
-    "start": "probot run ./lib/index.js",
-    "test": "jest"
+    "start": "yarn build && probot run ./lib/index.js"
   },
   "dependencies": {
+    "gitdiff-parser": "^0.2.2",
+    "jsonwebtoken": "^8.5.1",
+    "node-fetch": "^2.6.1",
+    "picomatch": "^2.2.2",
     "probot": "^10.1.0"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.9",
-    "@types/nock": "^11.1.0",
     "@types/node": "^14.0.27",
+    "@types/node-fetch": "^2.5.7",
+    "@types/picomatch": "^2.2.1",
     "@typescript-eslint/parser": "^3.9.0",
     "eslint-plugin-typescript": "^0.14.0",
-    "jest": "^26.4.0",
-    "nock": "^13.0.4",
     "smee-client": "^1.1.0",
-    "ts-jest": "^26.2.0",
     "typescript": "^3.9.7"
   },
   "engines": {
     "node": ">= 10.13.0"
-  },
-  "jest": {
-    "testEnvironment": "node"
   }
 }

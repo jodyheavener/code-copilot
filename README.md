@@ -1,25 +1,19 @@
-# copilot
+# Code Copilot
 
-> A GitHub App built with [Probot](https://github.com/probot/probot) that Prepare your PRs for a smooth landing
+> A GitHub App to prepare your PRs for a smooth landing
 
 ## Setup
 
 ```sh
 # Install dependencies
-npm install
+yarn
 
 # Compile
-npm run build
+yarn build
 
 # Run
-npm run start
+yarn start
 ```
-
-## Contributing
-
-If you have suggestions for how copilot could be improved, or want to report a bug, open an issue! We'd love all and any contributions.
-
-For more, check out the [Contributing Guide](CONTRIBUTING.md).
 
 ## License
 
