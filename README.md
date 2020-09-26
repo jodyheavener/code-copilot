@@ -18,7 +18,7 @@ Optional. This is a message that gets appended to the intro of every Copilot PR 
 
 Required. This is an object containing all the tips Copilot can output within its PR comment. You'll reference these in your rules below.
 
-The key should be a unique id, and the value is a string (Markdown supported).
+The key should be a unique ID, and the value is a string (Markdown supported).
 
 #### `rules`
 
@@ -29,7 +29,7 @@ Each object must contain a `reference` key with a value set to an existing refer
 - `newPathMatches` (`string` or `string[]`, glob supported) - A file's new path, during a rename, matches this pattern
 - `oldPathMatches` (`string` or `string[]`, glob supported) - A file's old path, during a rename, matches this pattern
 - `pathMatches` (`string` or `string[]`, glob supported) - A file's path (new or old) matches this path
-- `regexp` (`string` | `string[]`) - A content diff matches this regular expression (excludes deletions)
+- `regexp` (`string` or `string[]`) - A content diff matches this regular expression (excludes deletions)
 - `stringContains` (`string` or `string[]`) - A content diff contains this exact string (excludes deletions)
 - `fileAdded` (`boolean`) - Any file was added
 - `fileDeleted` (`boolean`) - Any file was deleted
@@ -59,7 +59,7 @@ rules:
   reference: remove-from-s3
 ```
 
-🎉 Done! Once installed and configured Code Copilot will not monitor for any new PRs to open and make suggestions according to the rules you've defined.
+🎉 Done! Once installed and configured Code Copilot will now monitor for any new PRs to open and make suggestions according to the rules you've defined.
 
 ## Development
 
