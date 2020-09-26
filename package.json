@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "start": "yarn build && probot run ./lib/index.js"
+    "start": "probot run ./lib/index.js"
   },
   "dependencies": {
     "gitdiff-parser": "^0.2.2",
