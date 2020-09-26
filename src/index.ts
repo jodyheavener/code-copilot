@@ -14,7 +14,13 @@ export = (app: Application) => {
     const { id: installationId } = context.payload.installation
     const config = (await context.config('copilot.yml')) as Config
 
-    if (!url || !installationId || !config) {
+    if (
+      !url ||
+      !installationId ||
+      !config ||
+      !config.references ||
+      !config.rules
+    ) {
       return
     }
 
@@ -32,18 +38,13 @@ export = (app: Application) => {
       return
     }
 
-    let body = `✈️ Let's prepare your PR for a smooth landing. Based on the ${pluralize(
-      parsedDiff.length,
-      'file',
-      'files'
-    )} changes in this PR you should keep the following in mind:\r\r`
+    const introText = config.intro ? ` ${config.intro}` : ''
+    const fileChangeCount = pluralize(parsedDiff.length, 'file', 'files')
+    let body = `Code Copilot here! ✈️ Let's prepare your PR for a smooth landing.${introText}\r\r`
+    body += `Based on the **${fileChangeCount}** changed in this PR I've put together these tips:\r`
 
     references.forEach((ref) => {
-      if (typeof ref === 'string') {
-        body += `- ${ref}\r`
-      } else {
-        body += `- [${ref.title}](${ref.url})\r`
-      }
+      body += `- ${ref}\r`
     })
 
     await context.github.issues.createComment(

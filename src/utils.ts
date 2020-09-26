@@ -4,23 +4,21 @@ import { sign } from 'jsonwebtoken'
 import { File } from 'gitdiff-parser'
 
 export type Config = {
+  intro?: string
   references: {
-    [id: string]:
-      | {
-          title: string
-          url: string
-        }
-      | string
+    [id: string]: string
   }
   rules: {
     reference: string | string[]
-    pathMatches?: string
-    newPathMatches?: string
-    oldPathMatches?: string
-    newFile?: boolean
-    regexp?: string
-    stringMatches?: string
-    stringContains?: string
+    pathMatches?: string | string[]
+    newPathMatches?: string | string[]
+    oldPathMatches?: string | string[]
+    regexp?: string | string[]
+    stringContains?: string | string[]
+    fileAdded?: boolean
+    fileDeleted?: boolean
+    fileRenamed?: boolean
+    fileModified?: boolean
   }[]
 }
 
@@ -90,6 +88,14 @@ export async function downloadUrl(
   })
 }
 
+export function makeArray(item: any) {
+  if (Array.isArray(item)) {
+    return item
+  } else {
+    return [item]
+  }
+}
+
 export function getMatchedReferences(
   files: File[],
   rules: Config['rules']
@@ -115,38 +121,66 @@ export function matchReferences(
   rules.forEach((ruleSet) => {
     let meetsCriteria = false
 
-    if (ruleSet.newFile) {
+    if (ruleSet.fileAdded) {
       meetsCriteria = file.type === 'add'
     }
 
+    if (ruleSet.fileDeleted) {
+      meetsCriteria = file.type === 'delete'
+    }
+
+    if (ruleSet.fileModified) {
+      meetsCriteria = file.type === 'modify'
+    }
+
+    if (ruleSet.fileRenamed) {
+      meetsCriteria = file.type === 'rename'
+    }
+
     if (ruleSet.newPathMatches) {
-      meetsCriteria = picomatch(ruleSet.newPathMatches)(file.newPath)
+      const newPathMatches = makeArray(ruleSet.newPathMatches)
+      meetsCriteria = newPathMatches.some((filePath: string) =>
+        picomatch(filePath)(file.newPath)
+      )
     }
 
     if (ruleSet.oldPathMatches) {
-      meetsCriteria = picomatch(ruleSet.oldPathMatches)(file.oldPath)
+      const oldPathMatches = makeArray(ruleSet.oldPathMatches)
+      meetsCriteria = oldPathMatches.some((filePath: string) =>
+        picomatch(filePath)(file.oldPath)
+      )
     }
 
     if (ruleSet.pathMatches) {
-      meetsCriteria =
-        picomatch(ruleSet.pathMatches)(file.oldPath) ||
-        picomatch(ruleSet.pathMatches)(file.newPath)
+      const pathMatches = makeArray(ruleSet.pathMatches)
+      meetsCriteria = pathMatches.some(
+        (filePath: string) =>
+          picomatch(filePath)(file.oldPath) || picomatch(filePath)(file.newPath)
+      )
     }
 
     if (ruleSet.stringContains) {
-      meetsCriteria = file.hunks.some((hunk) =>
-        hunk.changes.some((change) =>
-          change.content.includes(ruleSet.stringContains!)
+      const stringChecks = makeArray(ruleSet.pathMatches)
+      meetsCriteria = stringChecks.some((stringCheck: string) =>
+        file.hunks.some((hunk) =>
+          hunk.changes
+            .filter((change) => ['insert', 'normal'].includes(change.type))
+            .some((change) => change.content.includes(stringCheck))
         )
       )
     }
 
     if (ruleSet.regexp) {
-      meetsCriteria = file.hunks.some((hunk) =>
-        hunk.changes.some((change) => {
-          const regex = RegExp(ruleSet.regexp!)
-          return regex.test(change.content)
-        })
+      const regexps = makeArray(ruleSet.regexp)
+      meetsCriteria = regexps.some((regexp: string) =>
+        file.hunks.some((hunk) =>
+          hunk.changes
+            .filter((change) => ['insert', 'normal'].includes(change.type))
+            .some((change) => {
+              const regex = RegExp(regexp)
+              return regex.test(change.content)
+            })
+        )
       )
     }
 
